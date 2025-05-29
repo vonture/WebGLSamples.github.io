@@ -483,9 +483,9 @@ tdl.textures.CubeMap.prototype.loaded = function() {
 };
 
 tdl.textures.clampToMaxSize = function(element, maxSize) {
-  if (element.width <= maxSize && element.height <= maxSize) {
-    return element;
-  }
+  //if (element.width <= maxSize && element.height <= maxSize) {
+  //  return element;
+  //}
   var maxDimension = Math.max(element.width, element.height);
   var newWidth = Math.floor(element.width * maxSize / maxDimension);
   var newHeight = Math.floor(element.height * maxSize / maxDimension);
@@ -516,10 +516,20 @@ tdl.textures.CubeMap.prototype.uploadTextures = function() {
       if (allFacesLoaded) {
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
         if (this.faces.length == 6) {
-          gl.texImage2D(
-              target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
-              tdl.textures.clampToMaxSize(
-                  face.img, gl.tdl.textures.maxCubeMapSize));
+
+  const canvas = document.createElement('canvas'); 
+const ctx = canvas.getContext('2d'); 
+ 
+canvas.width = face.img.width; 
+canvas.height =face.img.height; 
+ 
+ctx.drawImage(face.img, 0, 0); 
+ 
+const rgba = ctx.getImageData( 
+  0, 0, canvas.width, canvas.height 
+).data;
+
+  gl.texImage2D(target, 0, gl.RGBA, canvas.width, canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, rgba);
         } else {
           var canvas = document.createElement('canvas');
           var width = face.img.width / 4;
@@ -530,10 +540,10 @@ tdl.textures.CubeMap.prototype.uploadTextures = function() {
           var sx = tdl.textures.CubeMap.offsets[faceIndex][0] * width;
           var sy = tdl.textures.CubeMap.offsets[faceIndex][1] * height;
           ctx.drawImage(face.img, sx, sy, width, height, 0, 0, width, height);
-          gl.texImage2D(
-              target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
-              tdl.textures.clampToMaxSize(
-                  canvas, gl.tdl.textures.maxCubeMapSize));
+const rgba = ctx.getImageData( 
+  0, 0, canvas.width, canvas.height 
+).data;
+  gl.texImage2D(gl.target, 0, gl.RGBA, canvas.width, canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, rgba);
         }
         uploaded = true;
       }
