@@ -324,16 +324,30 @@ tdl.textures.Texture2D.prototype.uploadTexture = function() {
 tdl.textures.Texture2D.prototype.setTexture = function(element) {
   // TODO(gman): use texSubImage2D if the size is the same.
   gl.bindTexture(gl.TEXTURE_2D, this.texture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, element);
-  if (tdl.textures.isPowerOf2(element.width) &&
-      tdl.textures.isPowerOf2(element.height)) {
-    this.setParameter(gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.generateMipmap(gl.TEXTURE_2D);
-  } else {
+
+
+  const canvas = document.createElement('canvas'); 
+const ctx = canvas.getContext('2d'); 
+ 
+canvas.width = element.width; 
+canvas.height =element.height; 
+ 
+ctx.drawImage(element, 0, 0); 
+ 
+const rgba = ctx.getImageData( 
+  0, 0, element.width, element.height 
+).data;
+
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, element.width, element.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, rgba);
+//  if (tdl.textures.isPowerOf2(element.width) &&
+//      tdl.textures.isPowerOf2(element.height)) {
+//    this.setParameter(gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+//    gl.generateMipmap(gl.TEXTURE_2D);
+//  } else {
     this.setParameter(gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     this.setParameter(gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     this.setParameter(gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  }
+ // }
 };
 
 tdl.textures.Texture2D.prototype.updateTexture = function() {

@@ -96,7 +96,7 @@ tdl.webgl.OTHER_PROBLEM = '' +
  *     if there is an error during creation.
  * @return {!WebGLRenderingContext} The created context.
  */
-tdl.webgl.setupWebGL = function(canvas, opt_attribs, opt_onError, opt_preferredContextType) {
+tdl.webgl.setupWebGL = async function(canvas, opt_attribs, opt_onError, opt_preferredContextType) {
   function handleCreationError(msg) {
     var container = canvas.parentNode;
     if (container) {
@@ -117,7 +117,7 @@ tdl.webgl.setupWebGL = function(canvas, opt_attribs, opt_onError, opt_preferredC
           opt_onError(event.statusMessage);
         }, false);
   }
-  var context = tdl.webgl.create3DContext(canvas, opt_attribs, opt_preferredContextType);
+  var context = await tdl.webgl.create3DContext(canvas, opt_attribs, opt_preferredContextType);
   if (context) {
     if (canvas.addEventListener) {
       canvas.addEventListener("webglcontextlost", function(event) {
@@ -144,7 +144,7 @@ tdl.webgl.setupWebGL = function(canvas, opt_attribs, opt_onError, opt_preferredC
  *     from. If one is not passed in one will be created.
  * @return {!WebGLRenderingContext} The created context.
  */
-tdl.webgl.create3DContext = function(canvas, opt_attribs, opt_preferredContextType) {
+tdl.webgl.create3DContext = async function(canvas, opt_attribs, opt_preferredContextType) {
   if (opt_attribs === undefined) {
     opt_attribs = {alpha:false};
     tdl.misc.applyUrlSettings(opt_attribs, 'webgl');
@@ -163,6 +163,9 @@ tdl.webgl.create3DContext = function(canvas, opt_attribs, opt_preferredContextTy
     }
   }
   if (context) {
+    if (context.initAsync) {
+      await context.initAsync();
+    }
     if (!tdl.webgl.glEnums) {
       tdl.webgl.init(context);
     }

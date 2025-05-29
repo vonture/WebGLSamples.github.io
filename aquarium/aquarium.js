@@ -875,7 +875,7 @@ function setSetting(elem, id) {
 /**
  * Initializes stuff.
  */
-function main() {
+async function main() {
   math = tdl.math;
   fast = tdl.fast;
   canvas = document.getElementById("canvas");
@@ -887,12 +887,11 @@ function main() {
   tdl.webgl.registerContextLostHandler(canvas, handleContextLost);
   tdl.webgl.registerContextRestoredHandler(canvas, handleContextRestored);
 
-  g_fpsTimer = new tdl.fps.FPSTimer();
-  if (isMultiviewSupportEnabled()) {
-    gl = tdl.webgl.setupWebGL(canvas, {antialias: false, xrCompatible: true}, undefined, 'webgl2');
+  if (false && isMultiviewSupportEnabled()) {
+    gl = await tdl.webgl.setupWebGL(canvas, {antialias: false, xrCompatible: true}, undefined, 'webgl2');
     multiview = gl.getExtension('OVR_multiview2');
   } else {
-    gl = tdl.webgl.setupWebGL(canvas);
+    gl = await tdl.webgl.setupWebGL(canvas);
   }
   if (!gl) {
     return false;
@@ -901,6 +900,7 @@ function main() {
     gl = tdl.webgl.makeDebugContext(gl, undefined, LogGLCall);
   }
 
+  g_fpsTimer = new tdl.fps.FPSTimer();
   initialize();
 }
 
