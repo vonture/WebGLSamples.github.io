@@ -554,6 +554,7 @@ const rgba = ctx.getImageData(
     }
   }
   var genMips = false;
+/*
   if (this.faces.length) {
     var faceImg = this.faces[0].img;
     if (this.faces.length == 6) {
@@ -564,6 +565,7 @@ const rgba = ctx.getImageData(
                 tdl.textures.isPowerOf2(faceImg.height / 3);
     }
   }
+*/
   if (genMips) {
     gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
     this.setParameter(gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
